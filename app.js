@@ -59,498 +59,486 @@ document.onkeydown = function(event) { return app.onKeyDown(event); };
 document.onkeyup = function(event) { return app.onKeyUp(event); };
 
 
-// UTILS
+// CLASS GridPosition
+app.classes.GridPosition = class GridPosition {
 
-app.classes.GridPosition = function (col, row)
-{
-	this.col = col;
-	this.row = row;
-};
-
-app.classes.GridPosition.prototype.is = function (other)
-{
-	return (this.col === other.col && this.row === other.row);
-};
-
-app.classes.GridPosition.prototype.matches = function (col, row)
-{
-	if ( ! row && typeof col === 'object')
-	{
-		return this.is(col);
+	constructor(col, row) {
+		this.col = col;
+		this.row = row;
 	}
 
-	return (this.col === col && this.row === row);
-};
+	is(other) {
+		return (this.col === other.col && this.row === other.row);
+	}
+
+	matches(col, row) {
+		if ( ! row && typeof col === 'object')
+		{
+			return this.is(col);
+		}
+
+		return (this.col === col && this.row === row);
+	}
+
+} // end: CLASS GridPosition
 
 
-// PLAYER
+// CLASS Player
+app.classes.Player = class Player {
 
-app.classes.Player = function (sector)
-{
-	this.name = lib.pickRandomItem(app.data.questGrammar.characterName);
-	this.icon = [{ type: 'player-icon', src:this.getIcon() }];
-	this.images = this.getImages();
-	this.addToSector(sector);
-	this.xp = 0;
-	this.level = 1;
-	this.credits = 0;
-	this.items = [];
-	this.quests = [];
-};
+	constructor(sector)	{
+		this.name = lib.pickRandomItem(app.data.questGrammar.characterName);
+		this.icon = [{ type: 'player-icon', src:this.getIcon() }];
+		this.images = this.getImages();
+		this.addToSector(sector);
+		this.xp = 0;
+		this.level = 1;
+		this.credits = 0;
+		this.items = [];
+		this.quests = [];
+	}
 
-app.classes.Player.prototype.getIcon = function ()
-{
-	return (lib.randomNumber(100) > 50) ? 'img/player.png' : 'img/player2.png';
-};
-
-app.classes.Player.prototype.getRandomImage = function (prefix, type, maxImages)
-{
-	var overlayImage,	name;
-
-	overlayImage = {
-		src: prefix + type + '/' + type + '_' + lib.lpad(lib.randomNumber(maxImages, 1), 2) + '.png',
-		type: type
+	getIcon() {
+		return (lib.randomNumber(100) > 50) ? 'img/player.png' : 'img/player2.png';
 	};
 
-	return overlayImage;
-};
+	getRandomImage(prefix, type, maxImages) {
+		var overlayImage,	name;
 
-app.classes.Player.prototype.getRandomNpcImage = function (type, maxImages)
-{
-	return this.getRandomImage('img/NPCs/', type, maxImages);
-};
+		overlayImage = {
+			src: prefix + type + '/' + type + '_' + lib.lpad(lib.randomNumber(maxImages, 1), 2) + '.png',
+			type: type
+		};
 
-app.classes.Player.prototype.getImages = function ()
-{
-	return [
-		this.getRandomNpcImage('busts'		, 11),
-		this.getRandomNpcImage('eyes'		, 11),
-		this.getRandomNpcImage('mouths'		,  6),
-		this.getRandomNpcImage('hair'		,  6),
-		this.getRandomNpcImage('clothes'	, 11)
-	];
-};
-
-app.classes.Player.prototype.changeSector = function (direction)
-{
-	var sector, newSector, newRow, newCol,
-		GridPosition = app.classes.GridPosition,
-		world = app.objects.world;
-
-	//app.debug.log('Player::changeSector(), direction:', direction);
-
-	sector = world.sectors[this.sectorid];
-
-	switch (direction)
-	{
-		case 'up':
-			newRow = this.row > 0 ? this.row - 1 : 0;
-			if (newRow !== this.row) { newSector = world.getSector(new GridPosition(this.col, newRow));	}
-			break;
-
-		case 'down':
-			newRow = this.row < (world.sectorRowCount - 1) ? this.row + 1 : this.row;
-			if (newRow !== this.row) { newSector = world.getSector(new GridPosition(this.col, newRow)); }
-			break;
-
-		case 'left':
-			newCol = this.col > 0 ? this.col - 1 : 0;
-			if (newCol !== this.col) { newSector = world.getSector(new GridPosition(newCol, this.row)); }
-			break;
-
-		case 'right':
-			newCol = this.col < (world.sectorColCount - 1) ? this.col + 1 : this.col;
-			if (newCol !== this.col) { newSector = world.getSector(new GridPosition(newCol, this.row)); }
-			break;
+		return overlayImage;
 	}
 
-	//app.debug.log('Player::changeSector(), newSector:', newSector);
-
-	if (newSector)
-	{
-		sector.hasPlayer = false;
-		this.addToSector(newSector);
-	}
-};
-
-app.classes.Player.prototype.addToSector = function (sector)
-{
-	this.sectorid = sector.id;
-	this.col = sector.col;
-	this.row = sector.row;
-	sector.hasPlayer = true;
-};
-
-
-// TOWN
-
-app.classes.Town = function (id, name, state)
-{
-	this.id = id;
-	this.name = name;
-	state = state || {};
-	this.sectorid = null;
-	this.barman = {};
-	this.barman.images = this.getBarmanImages();
-	this.npcs = [];
-	this.npcs.push({ images: this.getNpcImages() });
-	this.areas = state.areas || this.getAreas();
-	this.images = this.getTownImages();
-	this.quests = [];
-};
-
-app.classes.Town.prototype.getRandomImage = function (prefix, type, maxImages)
-{
-	var overlayImage,	name;
-
-	overlayImage = {
-		src: prefix + type + '/' + type + '_' + lib.lpad(lib.randomNumber(maxImages, 1), 2) + '.png',
-		type: type
-	};
-
-	return overlayImage;
-};
-
-app.classes.Town.prototype.getRandomTownImage = function (type, maxImages)
-{
-	return this.getRandomImage('img/TownArea/', type, maxImages);
-};
-
-app.classes.Town.prototype.getRandomBarmanImage = function (type, maxImages)
-{
-	return this.getRandomImage('img/Barman/', type, maxImages);
-};
-
-app.classes.Town.prototype.getRandomNpcImage = function (type, maxImages)
-{
-	return this.getRandomImage('img/NPCs/', type, maxImages);
-};
-
-app.classes.Town.prototype.getTownImages = function ()
-{
-	return [
-		this.getRandomTownImage('atmosphere'	, 21),
-		this.getRandomTownImage('terrain'		, 16),
-		this.getRandomTownImage('buildings'		, 13),
-		this.getRandomTownImage('misc'			, 21)
-	];
-};
-
-app.classes.Town.prototype.getNpcImages = function ()
-{
-	return [
-		this.getRandomNpcImage('busts'		, 11),
-		this.getRandomNpcImage('eyes'		, 11),
-		this.getRandomNpcImage('mouths'		, 6 ),
-		this.getRandomNpcImage('hair'		, 6 ),
-		this.getRandomNpcImage('clothes'	, 11)
-	];
-};
-
-app.classes.Town.prototype.getBarmanImages = function ()
-{
-	return [
-		this.getRandomBarmanImage('cloths'	    , 2 ),
-		this.getRandomBarmanImage('busts'		, 11),
-		this.getRandomBarmanImage('eyes'		, 11),
-		this.getRandomBarmanImage('mouths'		, 6 ),
-		this.getRandomBarmanImage('hair'		, 6 ),
-		this.getRandomBarmanImage('misc'	    , 2 ),
-		this.getRandomBarmanImage('clothes'	    , 11)
-	];
-};
-
-app.classes.Town.prototype.getAreas = function ()
-{
-	return lib.excludeRandomItems(
-		app.data.townAreaTypes,
-		5,
-		function (item) { return item.id === 'townmain' || item.id === 'questboard' || item.id === 'tavern'; }
-	);
-};
-
-app.classes.Town.prototype.addQuests = function (world) {
-	var i, n = lib.randomNumber(4, 1), quest, questSector;
-	for (i = 0; i < n; i++)
-	{
-		quest = new app.classes.Quest(
-			'q' + app.nextId++,
-			lib.pickRandomItem(Object.keys(app.data.questTypes)),
-			app.pickRandomGridPosition(app.config.worldSectorColCount, app.config.worldSectorRowCount)
-		);
-		quest.addToSector(world.getSector(quest.location));
-		this.quests.push(quest);
-	}
-};
-
-app.classes.Town.prototype.addToSector = function (sector)
-{
-	var i, n;
-	sector.type = 'town';
-	sector.items.push(this);
-	sector.placeid = this.id;
-	this.sectorid = sector.id;
-};
-
-
-// QUEST
-
-
-app.classes.QuestReward = function (xp, credits, items)
-{
-	this.xp = xp;
-	this.credits = credits;
-	this.items = items || [];
-};
-
-app.classes.Quest = function (id, type, location)
-{
-	this.id = id;
-	this.type = type;
-	this.location = location;
-	this.description = this.getDescription(this.type);
-	this.reward = this.getReward(this.type);
-	this.conditions = this.getConditions(this.type);
-	this.status = 'unassigned';
-	this.sectorid = null;
-};
-
-app.classes.Quest.prototype.getDescription = function(questType)
-{
-	var	questTypeTemplates, questTemplate, questDescription;
-	//app.debug.log('Quest::getDescription(), questType:', questType);
-
-	questTypeTemplates = app.data.questTypes[questType];
-	//app.debug.log('Quest::getDescription(), questTypeTemplates:', questTypeTemplates);
-
-	questTemplate = lib.pickRandomItem(questTypeTemplates);
-	//app.debug.log('Quest::getDescription(), questTemplate:', questTemplate);
-
-	questDescription = app.questGrammar.flatten(questTemplate);
-	//app.debug.log('Quest::getDescription(), questDescription:', questDescription);
-
-	return questDescription;
-};
-
-app.classes.Quest.prototype.getReward = function(questType)
-{
-	var reward, weights = {};
-
-	switch (questType)
-	{
-		case 'steal':
-			weights.item = 0.8;
-			weights.credits = 100;
-			weights.xp = 450;
-			break;
-		case 'gathering':
-			weights.item = 0.3;
-			weights.credits = 350;
-			weights.xp = 450;
-			break;
-		case 'kill':
-			weights.item = 0;
-			weights.credits = 700;
-			weights.xp = 650;
-			break;
-		case 'bounty':
-			weights.item = 0;
-			weights.credits = 850;
-			weights.xp = 500;
-			break;
-		case 'explore':
-			weights.item = 0.5;
-			weights.credits = 350;
-			weights.xp = 400;
-			break;
-		case 'diplomatic':
-			weights.item = 0.1;
-			weights.credits = 150;
-			weights.xp = 600;
-			break;
-		default:
-			weights.item = 0.3;
-			weights.credits = 100;
-			weights.xp = 250;
+	getRandomNpcImage(type, maxImages) {
+		return this.getRandomImage('img/NPCs/', type, maxImages);
 	}
 
-	reward = new app.classes.QuestReward(
-		weights.xp + lib.randomNumber(weights.xp * 0.5)|0,
-		weights.credits + lib.randomNumber(weights.credits * 0.5)|0,
-		(Math.random() <= weights.item) ? lib.pickRandomItems(
-			app.data.questGrammar.item,
-			(app.data.questGrammar.item.length * weights.item)|0
-		) : []
-	);
-
-	return reward;
-};
-
-app.classes.Quest.prototype.getConditions = function(questType)
-{
-	var conditions = lib.pickRandomItems(app.data.questGrammar.requirements, 2);
-	return conditions.length ? conditions : ["*open to all"];
-};
-
-app.classes.Quest.prototype.addToSector = function(sector)
-{
-	this.sectorid = sector.id;
-	sector.quests.push(this);
-	sector.hasQuest = true;
-};
-
-
-// SECTOR
-
-app.classes.Sector = function (id, gridPosition)
-{
-	this.id = id;
-	this.col = gridPosition.col;
-	this.row = gridPosition.row;
-	this.hasPlayer = false;
-	this.placeid = null;
-	this.type = null;
-	this.items = [];
-	this.quests = [];
-};
-
-
-// WORLD
-
-app.classes.World = function (sectorColCount, sectorRowCount)
-{
-	this.name = 'world';
-	this.sectorColCount = sectorColCount;
-	this.sectorRowCount = sectorRowCount;
-	this.player = {};
-	this.sectors = [];
-	this.places = [];
-	this.home = {};
-
-	this.generate();
-};
-
-app.classes.World.prototype.getSectors = function ()
-{
-	return this.sectors;
-};
-
-app.classes.World.prototype.getSectorsInRow = function (row)
-{
-	//app.debug.log('World::getSectorsInRow(), row:', row);
-
-	var offset = row * this.sectorColCount,
-		sectorsInRow = [],
-		i, n;
-
-	for (i = offset, n = offset + this.sectorColCount; i < n; i++)
-	{
-		sectorsInRow.push(this.sectors[i]);
+	getImages() {
+		return [
+			this.getRandomNpcImage('busts'		, 11),
+			this.getRandomNpcImage('eyes'		, 11),
+			this.getRandomNpcImage('mouths'		,  6),
+			this.getRandomNpcImage('hair'		,  6),
+			this.getRandomNpcImage('clothes'	, 11)
+		];
 	}
 
-	return sectorsInRow;
-};
+	changeSector(direction) {
+		var sector, newSector, newRow, newCol,
+			GridPosition = app.classes.GridPosition,
+			world = app.objects.world;
 
-app.classes.World.prototype.getSectorIndex = function (gridPosition)
-{
-	return gridPosition.row * this.sectorColCount + gridPosition.col;
-};
+		//app.debug.log('Player::changeSector(), direction:', direction);
 
-app.classes.World.prototype.getSector = function (gridPosition)
-{
-	return this.sectors[this.getSectorIndex(gridPosition)];
-};
+		sector = world.sectors[this.sectorid];
 
-// Add World Sectors
-app.classes.World.prototype.addSectors = function ()
-{
-	var sector,
-		sectorRow,
-		sectorColumn,
-		sectorGridPosition,
-		GridPosition = app.classes.GridPosition,
-		Sector = app.classes.Sector,
-		sectors = [];
+		switch (direction)
+		{
+			case 'up':
+				newRow = this.row > 0 ? this.row - 1 : 0;
+				if (newRow !== this.row) { newSector = world.getSector(new GridPosition(this.col, newRow));	}
+				break;
 
-	app.debug.log('World::addSectors(), cols:', this.sectorColCount, ', rows:', this.sectorRowCount);
+			case 'down':
+				newRow = this.row < (world.sectorRowCount - 1) ? this.row + 1 : this.row;
+				if (newRow !== this.row) { newSector = world.getSector(new GridPosition(this.col, newRow)); }
+				break;
 
-	for (sectorRow = 0; sectorRow < this.sectorRowCount; sectorRow++) {
-		for (sectorColumn = 0; sectorColumn < this.sectorColCount; sectorColumn++) {
-			sectorGridPosition = new GridPosition(sectorColumn, sectorRow);
-			sector = new Sector(this.getSectorIndex(sectorGridPosition), sectorGridPosition);
-			sectors.push(sector);
+			case 'left':
+				newCol = this.col > 0 ? this.col - 1 : 0;
+				if (newCol !== this.col) { newSector = world.getSector(new GridPosition(newCol, this.row)); }
+				break;
+
+			case 'right':
+				newCol = this.col < (world.sectorColCount - 1) ? this.col + 1 : this.col;
+				if (newCol !== this.col) { newSector = world.getSector(new GridPosition(newCol, this.row)); }
+				break;
+		}
+
+		//app.debug.log('Player::changeSector(), newSector:', newSector);
+
+		if (newSector)
+		{
+			sector.hasPlayer = false;
+			this.addToSector(newSector);
 		}
 	}
 
-	return sectors;
-};
+	addToSector(sector) {
+		this.sectorid = sector.id;
+		this.col = sector.col;
+		this.row = sector.row;
+		sector.hasPlayer = true;
+	}
 
-// Add World Places
-app.classes.World.prototype.addPlaces = function ()
-{
-	var randomSector, town, n;
-	//app.debug.log('World::addPlaces()');
-	randomSector = lib.pickRandomItem(this.sectors);
-	town = new app.classes.Town(this.places.length, 'Home Town');
-	town.addToSector(randomSector);
-	town.addQuests(this);
-	this.home.sector = randomSector;
-	this.home.town = town;
-	this.places.push(town);
-	n = 0;
-	do { randomSector = lib.pickRandomItem(this.sectors); n++; }
-	while (randomSector.type && n < 3);
-	town = new app.classes.Town(this.places.length, lib.pickRandomItem(app.data.questGrammar.location));
-	town.addToSector(randomSector);
-	town.addQuests(this);
-	this.places.push(town);
-	n = 0;
-	do { randomSector = lib.pickRandomItem(this.sectors); n++; }
-	while (randomSector.type && n < 3);
-	town = new app.classes.Town(this.places.length, lib.pickRandomItem(app.data.questGrammar.location));
-	town.addToSector(randomSector);
-	town.addQuests(this);
-	this.places.push(town);
-	n = 0;
-	do { randomSector = lib.pickRandomItem(this.sectors); n++; }
-	while (randomSector.type && n < 3);
-	town = new app.classes.Town(this.places.length, lib.pickRandomItem(app.data.questGrammar.location));
-	town.addToSector(randomSector);
-	town.addQuests(this);
-	this.places.push(town);
-	n = 0;
-	do { randomSector = lib.pickRandomItem(this.sectors); n++; }
-	while (randomSector.type && n < 3);
-	town = new app.classes.Town(this.places.length, lib.pickRandomItem(app.data.questGrammar.location));
-	town.addToSector(randomSector);
-	town.addQuests(this);
-	this.places.push(town);
-	app.debug.log('World::addPlaces(), home sector:', this.home.sector);
-	app.debug.log('World::addPlaces(), home town:', this.home.town);
-	app.debug.log('World::addPlaces(), places:', this.places);
-};
+} // end: CLASS Player
 
-// Add Player
-app.classes.World.prototype.addPlayer = function ()
-{
-	var randomSector, player, n = 0;
-	//app.debug.log('World::addPlayer()');
-	do { randomSector = lib.pickRandomItem(this.sectors); n++; }
-	while (randomSector.id === this.home.sector.id && n < 3);
-	player = new app.classes.Player(randomSector);
-	this.player = player;
-	app.debug.log('World::addPlayer(), player sector:', randomSector);
-	app.debug.log('World::addPlayer(), player:', this.player);
-};
 
-// Generate World
-app.classes.World.prototype.generate = function ()
-{
-	app.debug.log('World::generate()');
-	this.sectors = this.addSectors();
-	this.addPlaces();
-	this.addPlayer();
-};
+// CLASS Town
+app.classes.Town = class Town {
+
+	constructor(id, name, state) {
+		this.id = id;
+		this.name = name;
+		state = state || {};
+		this.sectorid = null;
+		this.barman = {};
+		this.barman.images = this.getBarmanImages();
+		this.npcs = [];
+		this.npcs.push({ images: this.getNpcImages() });
+		this.areas = state.areas || this.getAreas();
+		this.images = this.getTownImages();
+		this.quests = [];
+	}
+
+	getRandomImage(prefix, type, maxImages) {
+		var overlayImage,	name;
+
+		overlayImage = {
+			src: prefix + type + '/' + type + '_' + lib.lpad(lib.randomNumber(maxImages, 1), 2) + '.png',
+			type: type
+		};
+
+		return overlayImage;
+	}
+
+	getRandomTownImage(type, maxImages) {
+		return this.getRandomImage('img/TownArea/', type, maxImages);
+	}
+
+	getRandomBarmanImage(type, maxImages) {
+		return this.getRandomImage('img/Barman/', type, maxImages);
+	}
+
+	getRandomNpcImage(type, maxImages) {
+		return this.getRandomImage('img/NPCs/', type, maxImages);
+	}
+
+	getTownImages() {
+		return [
+			this.getRandomTownImage('atmosphere'	, 21),
+			this.getRandomTownImage('terrain'		, 16),
+			this.getRandomTownImage('buildings'		, 13),
+			this.getRandomTownImage('misc'			, 21)
+		];
+	}
+
+	getNpcImages() {
+		return [
+			this.getRandomNpcImage('busts'		, 11),
+			this.getRandomNpcImage('eyes'		, 11),
+			this.getRandomNpcImage('mouths'		, 6 ),
+			this.getRandomNpcImage('hair'		, 6 ),
+			this.getRandomNpcImage('clothes'	, 11)
+		];
+	}
+
+	getBarmanImages() {
+		return [
+			this.getRandomBarmanImage('cloths'	    , 2 ),
+			this.getRandomBarmanImage('busts'		, 11),
+			this.getRandomBarmanImage('eyes'		, 11),
+			this.getRandomBarmanImage('mouths'		, 6 ),
+			this.getRandomBarmanImage('hair'		, 6 ),
+			this.getRandomBarmanImage('misc'	    , 2 ),
+			this.getRandomBarmanImage('clothes'	    , 11)
+		];
+	}
+
+	getAreas() {
+		return lib.excludeRandomItems(
+			app.data.townAreaTypes,
+			5,
+			function (item) { return item.id === 'townmain' || item.id === 'questboard' || item.id === 'tavern'; }
+		);
+	}
+
+	addQuests(world) {
+		var i, n = lib.randomNumber(4, 1), quest, questSector;
+		for (i = 0; i < n; i++)
+		{
+			quest = new app.classes.Quest(
+				'q' + app.nextId++,
+				lib.pickRandomItem(Object.keys(app.data.questTypes)),
+				app.pickRandomGridPosition(app.config.worldSectorColCount, app.config.worldSectorRowCount)
+			);
+			quest.addToSector(world.getSector(quest.location));
+			this.quests.push(quest);
+		}
+	}
+
+	addToSector(sector)	{
+		var i, n;
+		sector.type = 'town';
+		sector.items.push(this);
+		sector.placeid = this.id;
+		this.sectorid = sector.id;
+	}
+
+} // end: CLASS Town
+
+
+// CLASS QuestReward
+app.classes.QuestReward = class QuestReward {
+
+	constructor(xp, credits, items) {
+		this.xp = xp;
+		this.credits = credits;
+		this.items = items || [];
+	}
+
+} // end: CLASS QuestReward
+
+
+// CLASS Quest
+app.classes.Quest = class Quest {
+
+	constructor(id, type, location)
+	{
+		this.id = id;
+		this.type = type;
+		this.location = location;
+		this.description = this.getDescription(this.type);
+		this.reward = this.getReward(this.type);
+		this.conditions = this.getConditions(this.type);
+		this.status = 'unassigned';
+		this.sectorid = null;
+	}
+
+	getDescription(questType) {
+		var	questTypeTemplates, questTemplate, questDescription;
+		//app.debug.log('Quest::getDescription(), questType:', questType);
+
+		questTypeTemplates = app.data.questTypes[questType];
+		//app.debug.log('Quest::getDescription(), questTypeTemplates:', questTypeTemplates);
+
+		questTemplate = lib.pickRandomItem(questTypeTemplates);
+		//app.debug.log('Quest::getDescription(), questTemplate:', questTemplate);
+
+		questDescription = app.questGrammar.flatten(questTemplate);
+		//app.debug.log('Quest::getDescription(), questDescription:', questDescription);
+
+		return questDescription;
+	}
+
+	getReward(questType) {
+		var reward, weights = {};
+
+		switch (questType)
+		{
+			case 'steal':
+				weights.item = 0.8;
+				weights.credits = 100;
+				weights.xp = 450;
+				break;
+			case 'gathering':
+				weights.item = 0.3;
+				weights.credits = 350;
+				weights.xp = 450;
+				break;
+			case 'kill':
+				weights.item = 0;
+				weights.credits = 700;
+				weights.xp = 650;
+				break;
+			case 'bounty':
+				weights.item = 0;
+				weights.credits = 850;
+				weights.xp = 500;
+				break;
+			case 'explore':
+				weights.item = 0.5;
+				weights.credits = 350;
+				weights.xp = 400;
+				break;
+			case 'diplomatic':
+				weights.item = 0.1;
+				weights.credits = 150;
+				weights.xp = 600;
+				break;
+			default:
+				weights.item = 0.3;
+				weights.credits = 100;
+				weights.xp = 250;
+		}
+
+		reward = new app.classes.QuestReward(
+			weights.xp + lib.randomNumber(weights.xp * 0.5)|0,
+			weights.credits + lib.randomNumber(weights.credits * 0.5)|0,
+			(Math.random() <= weights.item) ? lib.pickRandomItems(
+				app.data.questGrammar.item,
+				(app.data.questGrammar.item.length * weights.item)|0
+			) : []
+		);
+
+		return reward;
+	}
+
+	getConditions(questType) {
+		var conditions = lib.pickRandomItems(app.data.questGrammar.requirements, 2);
+		return conditions.length ? conditions : ["*open to all"];
+	}
+
+	addToSector(sector) {
+		this.sectorid = sector.id;
+		sector.quests.push(this);
+		sector.hasQuest = true;
+	}
+
+} // end: CLASS Quest
+
+
+// CLASS Sector
+app.classes.Sector = class Sector {
+
+	constructor(id, gridPosition) {
+		this.id = id;
+		this.col = gridPosition.col;
+		this.row = gridPosition.row;
+		this.hasPlayer = false;
+		this.placeid = null;
+		this.type = null;
+		this.items = [];
+		this.quests = [];
+	}
+
+} // end: CLASS Sector
+
+
+// CLASS World
+app.classes.World = class Word {
+
+	constructor(sectorColCount, sectorRowCount) {
+		this.name = 'world';
+		this.sectorColCount = sectorColCount;
+		this.sectorRowCount = sectorRowCount;
+		this.player = {};
+		this.sectors = [];
+		this.places = [];
+		this.home = {};
+
+		this.generate();
+	}
+
+	getSectors() {
+		return this.sectors;
+	}
+
+	getSectorsInRow(row) {
+		//app.debug.log('World::getSectorsInRow(), row:', row);
+
+		var offset = row * this.sectorColCount,
+			sectorsInRow = [],
+			i, n;
+
+		for (i = offset, n = offset + this.sectorColCount; i < n; i++)
+		{
+			sectorsInRow.push(this.sectors[i]);
+		}
+
+		return sectorsInRow;
+	}
+
+	getSectorIndex(gridPosition) {
+		return gridPosition.row * this.sectorColCount + gridPosition.col;
+	}
+
+	getSector(gridPosition) {
+		return this.sectors[this.getSectorIndex(gridPosition)];
+	}
+
+	// Add World Sectors
+	addSectors() {
+		var sector,
+			sectorRow,
+			sectorColumn,
+			sectorGridPosition,
+			GridPosition = app.classes.GridPosition,
+			Sector = app.classes.Sector,
+			sectors = [];
+
+		app.debug.log('World::addSectors(), cols:', this.sectorColCount, ', rows:', this.sectorRowCount);
+
+		for (sectorRow = 0; sectorRow < this.sectorRowCount; sectorRow++) {
+			for (sectorColumn = 0; sectorColumn < this.sectorColCount; sectorColumn++) {
+				sectorGridPosition = new GridPosition(sectorColumn, sectorRow);
+				sector = new Sector(this.getSectorIndex(sectorGridPosition), sectorGridPosition);
+				sectors.push(sector);
+			}
+		}
+
+		return sectors;
+	}
+
+	// Add World Places
+	addPlaces() {
+		var randomSector, town, n;
+		//app.debug.log('World::addPlaces()');
+		randomSector = lib.pickRandomItem(this.sectors);
+		town = new app.classes.Town(this.places.length, 'Home Town');
+		town.addToSector(randomSector);
+		town.addQuests(this);
+		this.home.sector = randomSector;
+		this.home.town = town;
+		this.places.push(town);
+		n = 0;
+		do { randomSector = lib.pickRandomItem(this.sectors); n++; }
+		while (randomSector.type && n < 3);
+		town = new app.classes.Town(this.places.length, lib.pickRandomItem(app.data.questGrammar.location));
+		town.addToSector(randomSector);
+		town.addQuests(this);
+		this.places.push(town);
+		n = 0;
+		do { randomSector = lib.pickRandomItem(this.sectors); n++; }
+		while (randomSector.type && n < 3);
+		town = new app.classes.Town(this.places.length, lib.pickRandomItem(app.data.questGrammar.location));
+		town.addToSector(randomSector);
+		town.addQuests(this);
+		this.places.push(town);
+		n = 0;
+		do { randomSector = lib.pickRandomItem(this.sectors); n++; }
+		while (randomSector.type && n < 3);
+		town = new app.classes.Town(this.places.length, lib.pickRandomItem(app.data.questGrammar.location));
+		town.addToSector(randomSector);
+		town.addQuests(this);
+		this.places.push(town);
+		n = 0;
+		do { randomSector = lib.pickRandomItem(this.sectors); n++; }
+		while (randomSector.type && n < 3);
+		town = new app.classes.Town(this.places.length, lib.pickRandomItem(app.data.questGrammar.location));
+		town.addToSector(randomSector);
+		town.addQuests(this);
+		this.places.push(town);
+		app.debug.log('World::addPlaces(), home sector:', this.home.sector);
+		app.debug.log('World::addPlaces(), home town:', this.home.town);
+		app.debug.log('World::addPlaces(), places:', this.places);
+	}
+
+	// Add Player
+	addPlayer() {
+		var randomSector, player, n = 0;
+		//app.debug.log('World::addPlayer()');
+		do { randomSector = lib.pickRandomItem(this.sectors); n++; }
+		while (randomSector.id === this.home.sector.id && n < 3);
+		player = new app.classes.Player(randomSector);
+		this.player = player;
+		app.debug.log('World::addPlayer(), player sector:', randomSector);
+		app.debug.log('World::addPlayer(), player:', this.player);
+	}
+
+	// Generate World
+	generate() {
+		app.debug.log('World::generate()');
+		this.sectors = this.addSectors();
+		this.addPlaces();
+		this.addPlayer();
+	}
+
+} // end CLASS: World
 
 
 // MULTI-LAYER IMAGE
