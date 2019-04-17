@@ -1,0 +1,7 @@
+<div class="menu townmenu" @mouseleave="onMouseLeave($event)">
+	<ul>
+		<li v-for="(item, index) in town.areas" :class="getClassName(currentArea, item)" :key="index">
+			<button  type="button" :class="item.id" @click="onClick(item.id)" @mouseover="onMouseOver($event)">{{ item.name }}</button>
+		</li>
+	</ul>
+</div>

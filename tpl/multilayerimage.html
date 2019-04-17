@@ -1,0 +1,3 @@
+<div class="multilayer-image" @click="onClick">
+	<img v-for="(overlayImage, index) in images" :key="index" :class="overlayImage.type" :src="overlayImage.src">
+</div>

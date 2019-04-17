@@ -1,0 +1,232 @@
+{
+	"questGrammar": {
+
+		"gatherAction": [
+			"Retreive",
+			"Collect",
+			"Gather"
+		],
+
+		"bountyAction": [
+			"Wanted dead or alive",
+			"Capture",
+			"Hunt down"
+		],
+
+		"killAction": [
+			"Kill",
+			"Assasinate",
+			"End"
+		],
+
+		"diplomaticAction": [
+			"Speak to",
+			"Convince",
+			"Persuade",
+			"Intimidate"
+		],
+
+		"stealAction": [
+			"Steal",
+			"Take",
+			"Loot"
+		],
+
+		"exploreAction": [
+			"Scout",
+			"Explore",
+			"Search",
+			"Investigate"
+		],
+
+		"characterName": [
+			"Gadreel Bahrash",
+			"Lidia Marconis",
+			"Luchus Quilling",
+			"Tzaphquel Haden",
+			"Ralph the wicked",
+			"The gray fox",
+			"Mercer Frey",
+			"Orc the mighty",
+			"Archmage William",
+			"Gregor the slayer",
+			"Anonomous",
+			"Captain Zelnick",
+			"The Legion"
+		],
+
+		"location": [
+			"Tamriel",
+			"Lost Knife hideout",
+			"Twilight sanctuary",
+			"Redcliff",
+			"Barren fields",
+			"Deep forest",
+			"South Wind bridge",
+			"Old ruins",
+			"Sage mountain",
+			"Green-Sky valley",
+			"Empty-Soul marsh",
+			"West River desert",
+			"The Legion outpost",
+			"Silver Run",
+			"Gold Wrath",
+			"Swift Moon",
+			"Remiel Cliff",
+			"Malachi Fields",
+			"Archiblad Woods",
+			"Magnus Marsh",
+			"Byrnjolf Masonary",
+			"Maldrek Butchery",
+			"TrollWood"
+		],
+
+		"item": [
+			"Ring of power",
+			"Old map",
+			"Poisonoius Plant",
+			"Golden Statue",
+			"Rusty Mace",
+			"Ancient Book",
+			"powerful Spell",
+			"Strange Flower",
+			"Healing Herb",
+			"Emerald",
+			"Diamond",
+			"Iron Ore",
+			"Key to Treasure Chest",
+			"Healing Potion",
+			"Black Book",
+			"Firebeard's Bane",
+			"Broken Scepter Hilt",
+			"Broken Scepter Jewel",
+			"Broken Scepter Shaft",
+			"Old Clothes",
+			"Nefilheim Helmet",
+			"Royal Invitation Letter"
+		],
+
+		"creatureName": [
+			"Bear",
+			"Wolf",
+			"Dragon",
+			"Sheep",
+			"Troll",
+			"Sytar",
+			"witch",
+			"Hydra",
+			"Giant Bug"
+		],
+
+		"reason": [
+			"what the meaning of life is",
+			"kill his wife",
+			"invest into your clients business",
+			"stop global warming"
+		],
+
+		"thing": [
+			"Resources",
+			"Enemies",
+			"Good Soil",
+			"Magical Objects",
+			"Ancient Cities"
+		],
+
+		"num": ["1","2","3","4","5","6","7","8","9"],
+
+		"requirements": [
+			"Weapon required",
+			"Horse required",
+			"Level 5 player required"
+		]
+	},
+
+	"questTypes": {
+
+		"gathering": [
+			"#gatherAction# #num# #item#",
+			"#gatherAction# a #item#",
+			"#gatherAction# #num# #item# for #characterName#",
+			"#gatherAction# a #item# for #characterName#"
+		],
+
+		"bounty": [
+			"#bountyAction# #characterName#",
+			"#bountyAction# #characterName# last seen at #location#"
+		],
+
+		"kill": [
+			"#killAction# #characterName#",
+			"#killAction# the #creatureName# at #location#",
+			"#killAction# #num# #creatureName#",
+			"#killAction# #num# #creatureName# at #location#"
+		],
+
+		"diplomatic": [
+			"#diplomaticAction# #characterName# about #reason#",
+			"#diplomaticAction# #characterName# to #reason#",
+			"#diplomaticAction# #characterName# to not #reason#"
+		],
+
+		"steal": [
+			"#stealAction# #characterName#'s #item#",
+			"#stealAction# #item# from #characterName#"
+		],
+
+		"explore": [
+			"#exploreAction# #location#",
+			"#exploreAction# #location# for #thing#",
+			"#exploreAction# #location# for #characterName#"
+		]
+	},
+
+	"sectorTypes": [{
+			"id": "town",
+			"name": "Town"
+		},
+		{
+			"id": "quest",
+			"name": "Quest"
+		},
+		{
+			"id": "sectype3",
+			"name": "SectorType3"
+		},
+		{
+			"id": "sectype4",
+			"name": "SectorType4"
+		},
+		{
+			"id": "sectype5",
+			"name": "SectorType5"
+		}
+	],
+
+	"townAreaTypes": [{
+			"id": "townmain",
+			"name": "Town Main"
+		},
+		{
+			"id": "questboard",
+			"name": "Quest Board"
+		},
+		{
+			"id": "townhall",
+			"name": "Town Hall"
+		},
+		{
+			"id": "market",
+			"name": "Market"
+		},
+		{
+			"id": "tavern",
+			"name": "Tavern"
+		},
+		{
+			"id": "inn",
+			"name": "Inn"
+		}
+	]
+
+}

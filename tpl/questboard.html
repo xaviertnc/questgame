@@ -1,0 +1,40 @@
+<div class="townarea questboard-area">
+
+	<img class="quest-icon" :src="iconfile" alt="Questboard Icon">
+
+	<ul class="quests-list">
+		<li v-for="(quest,index) in quests">
+			<table class="quest-panel">
+				<tr>
+					<td>
+						<div class="quest-status" :class="quest.status">{{ quest.status }}</div>
+						<b>{{ quest.type | capitalize }} Quest:</b><br>
+						{{ quest.description }}
+					</td>
+					<td>
+						<template v-for="(condition, index) in quest.conditions">
+							<span style="color:maroon; font-size:0.8em">{{ condition }}</span><br>
+						</template>
+					</td>
+				</tr>
+				<tr>
+					<td style="font-weight:bold">
+						<span style="color:red">Reward:</span><br>
+						<span style="color:orangered">{{ quest.reward.xp }}</span> Xp,
+						<span style="color:orangered">{{ quest.reward.credits }}</span>
+						Gold<span v-for="(item, index) in quest.reward.items" style="color:darkslateblue">, {{ item }}</span>
+					</td>
+					<td>
+						<button v-if="quest.status==='unassigned' || quest.status==='assigned'" type="button" @click="onAcceptQuest(quest)" :disabled="quest.status==='assigned'">
+							Accept Quest
+						</button>
+						<button v-else-if="quest.status==='completed'" type="button" @click="onClaimReward(quest)">
+							Claim Reward
+						</button>
+					</td>
+				</tr>
+			</table>
+		</li>
+	</ul>
+
+</div>

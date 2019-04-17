@@ -1,0 +1,361 @@
+#app {
+	max-width: 729px;
+	min-width: 480px;
+	margin: 0 auto;
+	padding: 7px 7px 21px;
+}
+
+h1 { color: blue; margin: 0; float: left; }
+h3 {
+	color: crimson;
+	left: 7px;
+	margin: 0;
+	padding: 2px 4px;
+	position: absolute;
+	top: 7px;
+	z-index: 20;
+}
+
+ul { list-style: none; padding: 0; margin: 0; }
+
+table { border-collapse: collapse; }
+
+section { float: left; }
+
+nav {
+	clear: both;
+	margin: 7px 0;
+	white-space: nowrap;
+}
+
+nav button {
+    margin: 0 5px 10px;
+    padding: 3px 7px;
+    width: 120px;
+}
+
+.grid {
+	clear: both;
+	height: 432px;
+	margin: 0 7px 7px;
+	position: relative;
+	width: 432px;
+}
+
+.grid ul {
+	clear: both;
+	display: block;
+	white-space: nowrap;
+}
+
+.grid li {
+	border: 1px solid green;
+	color: lightgrey;
+	float: left;
+	font-size: 0.5em;
+	height: 32px;
+	line-height: 30px;
+	margin: 1px;
+	overflow: hidden;
+	padding : 0;
+	text-align: center;
+	width: 32px;
+}
+
+.multilayer-image {
+	height: 32px;
+	position: relative;
+	width: 32px;
+}
+
+.multilayer-image img {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+
+.hasQuest {
+	position: relative;
+}
+
+.hasQuest::after {
+	content: " ";
+	background: url("../img/Quest.png") center no-repeat;
+	background-size: cover;
+	width: 18px;
+	height: 18px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 10;
+}
+
+.hasQuest.completed::after {
+	background-image: url("../img/Quest_2.png");
+}
+
+
+.townpage .multilayer-image img {
+	width: 100%;
+	height: 100%;
+	image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
+	image-rendering: -moz-crisp-edges;          /* Firefox                        */
+	image-rendering: -o-crisp-edges;            /* Opera                          */
+	image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+	image-rendering: pixelated;                 /* Chrome                         */
+	image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+	-ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+}
+
+.bar-counter {
+	background-image: url("../img/Tavern_Bar.png");
+	background-size: cover;
+	width: 480px;
+	height: 480px;
+}
+
+.bar-counter .multilayer-image {
+	position: absolute;
+	width: 180px;
+	height: 180px;
+	top: 85px;
+	left: 36px;
+}
+
+.townmenu {
+	background-color: brown;
+	border: 5px solid navajowhite;
+	box-shadow: 1px 1px 3px #222;
+	color: yellow;
+	float: left;
+	margin: 0 7px 7px;
+	opacity: 0.8;
+	padding: 10px 10px 0;
+}
+
+.townmenu button {
+	background-color: maroon;
+	border: 3px solid lightsalmon;
+	color: white;
+	cursor: pointer;
+	display: block;
+	font-family: arial, sans;
+	margin: 0 0 10px;
+	padding: 7px;
+	text-decoration: none;
+	width: 170px;
+}
+
+.townarea {
+	border: 5px solid white;
+	box-shadow: 1px 1px 3px #222;
+	float: left;
+	margin: 0 7px;
+	position: relative;
+	width: 480px;
+	height: 480px;
+}
+
+.townarea .town-image {
+	width: 100%;
+	height: 100%;
+}
+
+.townarea .npc-image {
+	height: 128px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 128px;
+    border: 7px solid white;
+    border-top: none;
+    border-right: none;
+    opacity: 0.9;
+}
+
+.questboard-area {
+	background-color: moccasin;
+}
+
+
+
+.quests-list {
+	font-family: monospace, "sans serif";
+	font-size: 0.8em;
+	margin: 0 auto;
+}
+
+.quest-icon {
+	width: 40px;
+	height: 40px;
+	margin: 0 auto;
+	display: block;
+}
+
+.quest-panel {
+	margin: 2% 0;
+	border-collapse: collapse;
+	border-top: 5px solid black;
+	border-bottom: 5px solid black;
+	border-right: 5px solid black;
+	width: 100%;
+}
+
+.quest-panel td {
+	border-left: 5px solid black;
+	padding: 1% 2%;
+}
+
+.quest-panel td:last-child {
+	width: 40%;
+}
+
+.quest-status {
+	background-color: firebrick;
+	color: white;
+	font-size: 9px;
+	border-radius: 4px;
+	float: right;
+	padding: 0px 4px;
+	box-shadow: -1px 1px 5px black;
+}
+
+.quest-status.assigned {
+	background-color: forestgreen;
+}
+
+.quest-status.completed {
+	background-color: slategrey;
+}
+
+.quest-status.closed {
+	background-color: black;
+}
+
+.menu .selected button {
+	border-color: white;
+	color: white;
+}
+
+.hasfocus button {
+	border-color: yellow;
+	color: yellow;
+}
+
+.player {
+	position: absolute;
+}
+
+.player-icon {
+	z-index: 15;
+}
+
+.player-id {
+	clear: left;
+	margin: 3px;
+}
+
+.player-name {
+	background-color: midnightblue;
+	border: 2px solid burlywood;
+	color: wheat;
+	font-family: "serif";
+	font-style: italic;
+	font-size: 0.9em;
+	font-weight: bold;
+	min-height: 36px;
+	padding: 0.2em 0.5em;
+	text-align: center;
+	width: 110px;
+}
+
+.player-id .multilayer-image {
+	width: 65px;
+	height: 65px;
+	margin: 3px auto;
+}
+
+.player-id img {
+	width: 100%;
+	height: 100%;
+	image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
+	image-rendering: -moz-crisp-edges;          /* Firefox                        */
+	image-rendering: -o-crisp-edges;            /* Opera                          */
+	image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+	image-rendering: pixelated;                 /* Chrome                         */
+	image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+	-ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+}
+
+.player-stats {
+	font-size: 11px;
+	font-family: monospace;
+	width: 135px;
+	margin-left: 7px;
+}
+
+.player-stats dl {
+	display: block;
+	margin: 3px;
+	white-space: nowrap;
+}
+
+.player-stats dt {
+	display: inline-block;
+	width: 91px;
+}
+
+.player-stats dd {
+	display: inline;
+	margin: 0 3px;
+}
+
+.player-stats .completed {
+	background-color: mintcream;
+	border-color: seagreen;
+	color: darkgreen;
+}
+
+.player-quest, .player-item {
+    background-color: lavenderblush;
+    border-left: 4px solid salmon;
+    color: firebrick;
+    display: inline-block;
+    font-size: 11px;
+    line-height: 14px;
+    margin: 2px;
+    padding: 1px 4px;
+    white-space: normal;
+    width: 315px;
+}
+
+.player-item {
+	background-color: lavender;
+	border-color: slateblue;
+	color: indigo;
+}
+
+.player-controls {
+	float: right;
+	height: 192px;
+	position: relative;
+	width: 192px;
+	opacity: 0.75;
+}
+
+.key {
+	background-color: dodgerblue;
+	color: yellow;
+	cursor:pointer;
+	font-weight: bold;
+	height: 64px;
+	position: absolute;
+	text-align: center;
+	width: 64px;
+}
+
+.key-up    { left: 64px;  top: 0;     }
+.key-left  { left: 0;     top: 64px;  }
+.key-enter { left: 64px;  top: 64px;  }
+.key-right { left: 128px; top: 64px;  }
+.key-down  { left: 64px;  top: 128px; }

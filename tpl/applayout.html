@@ -1,0 +1,54 @@
+<div id="app">
+
+	<header>
+
+		<section class="player-controls">
+			<button class="key key-up"    type="button" @click="onGoUp($event)   "> U     </button>
+			<button class="key key-left"  type="button" @click="onGoLeft($event) "> L     </button>
+			<button class="key key-enter" type="button" @click="onEnter($event)  "> Enter </button>
+			<button class="key key-right" type="button" @click="onGoRight($event)"> R     </button>
+			<button class="key key-down"  type="button" @click="onGoDown($event) "> D     </button>
+		</section>
+
+		<h1 class="title-bar">Quest Game</h1>
+
+		<section class="player-id">
+			<multilayer-image :images="getPlayer().images"></multilayer-image>
+			<div class="player-name">{{ playerName }}</div>
+		</section>
+
+		<section class="player-stats">
+			<dl><dt>Player Level</dt>:<dd>{{ playerLevel   }}</dd></dl>
+			<dl><dt>Player Gold </dt>:<dd>{{ playerCredits }}</dd></dl>
+			<dl><dt>Player XP   </dt>:<dd>{{ playerXp      }}</dd></dl>
+			<dl>
+				<dt>Player Items :</dt>
+				<dd>
+					<ul v-for="(item, index) in playerItems">
+						<li class="player-item">{{ item }}</li>
+					</ul>
+				</dd>
+			</dl>
+			<dl>
+				<dt>Player Quests :</dt>
+				<dd>
+					<ul v-for="(quest, index) in playerQuests">
+						<li class="player-quest" :class="quest.status">
+							{{ quest.description }} (c:{{ quest.location.col }},r:{{ quest.location.row }})
+						</li>
+					</ul>
+				</dd>
+			</dl>
+		</section>
+
+		<nav>
+			<button @click="gotoPage('gridpage', getWorld())">Grid Page</button>
+			<button onclick="app.restart()">Restart App</button>
+		</nav>
+	</header>
+
+	<keep-alive include="gridpage!!!disabled">
+	<component :is="currentPage" @quest-accepted="onQuestAccepted" @quest-claim-reward="onClaimReward"></component>
+	</keep-alive>
+
+</div>

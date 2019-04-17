@@ -1,0 +1,5 @@
+<div class="townarea townmain">
+	<h3>{{ town.name }}</h3>
+	<multilayer-image class="town-image" :images="town.images" @image-click="onImageClick"></multilayer-image>
+	<multilayer-image class="npc-image" :images="town.npcs[0].images" @image-click="onImageClick"></multilayer-image>
+</div>

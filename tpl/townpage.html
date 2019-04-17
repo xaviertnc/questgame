@@ -1,0 +1,11 @@
+<div id="page" class="townpage">
+
+	<div class="towndetail">
+
+		<townmenu :town="town" :currentArea="currentArea" @menu-select="onMenuSelect"></townmenu>
+
+		<component :is="currentArea" :town="town" @quest-accepted="onQuestAccepted" @quest-claim="onClaimReward"></component>
+
+	</div>
+
+</div>

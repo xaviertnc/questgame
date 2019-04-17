@@ -1,0 +1,25 @@
+<div id="page" class="gridpage">
+
+	<button id="hbtn" type="button" style="position:fixed; left:-1000; height: 0; width: 1px; opacity:0"></button>
+
+	<div class="grid">
+
+		<ul v-for="row in getWorld().sectorRowCount">
+			<li v-for="sector in getWorld().getSectorsInRow(row-1)" :key="sector.id" :class="getSectorClassName(sector)">
+
+				<template v-if="sector.items.length">
+					<multilayer-image :id="sector.id" :images="getPlace(sector.placeid).images" @image-click="onPlaceClick"></multilayer-image>
+				</template>
+
+				<template v-else>
+					{{ sector.col }}:{{ sector.row }}
+				</template>
+
+			</li>
+		</ul>
+
+		<multilayer-image :style="playerStyle" :images="player.icon" @image-click="onPlayerClick"></multilayer-image>
+
+	</div>
+
+</div>
