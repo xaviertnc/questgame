@@ -122,12 +122,16 @@ nav button {
 	left: 36px;
 }
 
+.left-column {
+	float: left;
+}
+
 .townmenu {
 	background-color: brown;
 	border: 5px solid navajowhite;
 	box-shadow: 1px 1px 3px #222;
 	color: yellow;
-	float: left;
+	/*float: left;*/
 	margin: 0 7px 7px;
 	opacity: 0.8;
 	padding: 10px 10px 0;
@@ -161,23 +165,27 @@ nav button {
 	height: 100%;
 }
 
-.townarea .npc-image {
+.towndetail .npc-image {
 	height: 128px;
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 128px;
-    border: 7px solid white;
-    border-top: none;
-    border-right: none;
-    opacity: 0.9;
+  /*float: left;*/
+  width: 128px;
+  /*border: 7px solid white;*/
+  border-top: none;
+  border-right: none;
+  opacity: 0.9;
+	margin: auto;
+}
+
+.towndetail .npc-frame {
+	background-color: aquamarine;
+	border: 1px solid gainsboro;
+	text-align: center;
+	margin: 0.4em;
 }
 
 .questboard-area {
 	background-color: moccasin;
 }
-
-
 
 .quests-list {
 	font-family: monospace, "sans serif";
